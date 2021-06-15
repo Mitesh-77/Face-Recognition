@@ -19,7 +19,7 @@ root.geometry("800x500")
 root.title("Face Recogniser")
 root.resizable(False,False)
 #root.configure(bg="#0a0352")
-filename = tk.PhotoImage(file = "E:\\mitesh\\Tkinter\\background.png")
+filename = tk.PhotoImage(file = "#Imagepath")
 background_label = tk.Label(root, image=filename)
 background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
@@ -61,7 +61,7 @@ def takeImages():
                 # incrementing sample number
                 sampleNum = sampleNum + 1
                 # saving the captured face in the dataset folder TrainingImages
-                dir = "E:\mitesh\Tkinter\TrainingImages"
+                dir = "Pathoffolder"
                 dir = os.path.join(dir,f"{Student_name}_{Student_Id}")
                 if not os.path.exists(dir):
                     os.makedirs(dir)
@@ -106,34 +106,25 @@ def getAttendace_csv(path, tms):
     Time = 0
     Attendance_csv = []
     Attendance_csv.extend([os.path.join(path, f) for f in os.scandir(path)])
-    #print(Attendance_csv)
-    #print(tms)
     #create time List
     if len(Attendance_csv)!= 0 :
         for csvfile in Attendance_csv:
-            #os.path.split(csvfile) ---->('E:\\mitesh\\Tkinter\\Attendance\\ML\\2021-02-01', 'Attendance_ML_2021-02-01_11.csv')
             hour = int(os.path.split(csvfile)[-1].split(".")[0].split("_")[-1].split("-")[0])
             minute = int(os.path.split(csvfile)[-1].split(".")[0].split("_")[-1].split("-")[1])
             total_minute =  (hour * 60) + minute
-            #print(total_minute)
             if tms - total_minute<60:
                 Time=total_minute
             else :
                 Time = tms
-        #print(tms,total_minute,Time)
     return Time
 
 
 def getImagesAndLabels(path):
     imagePaths = []
     for item in os.listdir(path):
-        #print(item)
         path1 = os.path.join(path,item)
-        #print(path1)
         # get the path of all the files in the folder
         imagePaths.extend([os.path.join(path1, f) for f in os.listdir(path1)])
-    #print(imagePaths)
-
 
     # create empth face list
     faces = []
@@ -206,7 +197,7 @@ def trackImages():
     ts = time.time()
     date = datetime.datetime.fromtimestamp(ts).strftime('%d-%m-%Y')
     sub = "ML"
-    dir = "E:\mitesh\Tkinter\Attendance"
+    dir = "pathofattendancefolder"
     dir = os.path.join(dir, f"{sub}")
     if not os.path.exists(dir):
         os.makedirs(dir)
@@ -218,12 +209,10 @@ def trackImages():
     Hour, Minute, Second = timeStamp.split(":")
     total_minits = (60 * int(Hour)) + int(Minute)
     previous_csv_minute = getAttendace_csv(dir, total_minits)
-    #print(previous_csv_minute,total_minits)
     Attendancecsv = []
     Attendancecsv.extend(os.path.join(dir, f) for f in os.scandir(dir))
     if previous_csv_minute != total_minits and len(Attendancecsv)!=0:
         pch = int(previous_csv_minute/60)
-        #print(Attendancecsv)
         for f in Attendancecsv:
             if int(os.path.split(f)[-1].split(".")[0].split("_")[-1].split("-")[0])==pch:
                 fileName=f"{dir}\{os.path.split(f)[-1]}"
@@ -231,36 +220,20 @@ def trackImages():
                 attendance = attendance.append(filerow,ignore_index=True)
                 attendance.sort_values("Id", inplace=True)
                 attendance.drop_duplicates(subset="Id", keep="first", inplace=True)
-                #print(attendance.append(filerow,ignore_index=True))
     else :
         fileName = f"{dir}\Attendance-{sub}_{date}_{Hour}-{Minute}-{Second}" + ".csv"
     attendance.to_csv(fileName, index=False)
     cam.release()
     cv2.destroyAllWindows()
-    #print(attendance)+
     res = attendance
     eAttandance.configure(text=res)
 
 
-# tk.Label(root, text="Face Recognition Based Attendance System", fg="white",
-#                 bg="#0a0352",pady=20, font="Times 25 bold underline", underline=5).place(x=100, y=10)
-#
-# name = tk.Label(root, text="Enter Name : ", fg="white", bg="#0a0352", font="verdana 15")
-# id = tk.Label(root, text="Enter Id       : ", fg="white", bg="#0a0352", font="verdana 15")
-#notification = tk.Label(root, text="Notification  : ", fg="white", bg="#0a0352", font="verdana 15")
-
-# name.place(x=150, y=100)
-# id.place(x=150, y=150)
-#notification.place(x=150, y=200)
-
-
 Stu_name = tk.Entry(root, width=30, bg="white",  font="Times")
 Stu_id = tk.Entry(root, width=30, bg="white",  font="Times")
-#enotification = tk.Label(root, text="" , width=45, bg="white", font="Times")
 
 Stu_name.place(x=310, y=105)
 Stu_id.place(x=310, y=155)
-#enotification.place(x=300, y=205)
 
 frame = tk.Frame(root, borderwidth=3, bg="white", relief="sunken").pack()
 
@@ -272,9 +245,6 @@ b2.place(x=350, y=270)
 
 b3 = tk.Button(frame, text="Test Photo", height=2, width=15,  cursor="hand2", font="Arial 13 bold", command=trackImages)
 b3.place(x=550, y=270)
-
-# Attendance = tk.Label(root, text="Attendance  : ", fg="white", bg="#0a0352", font="verdana 15")
-# Attendance.place(x=150, y=350)
 
 eAttandance = tk.Label(root, text="", width=51, bg="white", font="Times")
 eAttandance.place(x=305, y=355, height=40)
